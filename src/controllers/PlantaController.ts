@@ -158,10 +158,32 @@ export const deletePlanta = async (req: Request, res: Response) => {
 
 export const readAllPlantas = async (req: Request, res: Response) => {
   try {
-    const plantas = await PlantaRepository.findAllPlantas({});
+    const { luminosidade, petFriendly } = req.query;
+
+    let luminosidadeFiltro: Luminosidade | undefined;
+    if (luminosidade !== undefined) {
+      if (!Object.values(Luminosidade).includes(luminosidade as Luminosidade)) {
+        return res.status(400).json({ message: "luminosidade deve ser SOMBRA, MEIA_SOMBRA ou SOL_PLENO." });
+      }
+      luminosidadeFiltro = luminosidade as Luminosidade;
+    }
+
+    let petFriendlyFiltro: boolean | undefined;
+    if (petFriendly !== undefined) {
+      if (petFriendly !== "true" && petFriendly !== "false") {
+        return res.status(400).json({ message: "petFriendly deve ser true ou false." });
+      }
+      petFriendlyFiltro = petFriendly === "true";
+    }
+
+    const plantas = await PlantaRepository.findAllPlantas({
+      luminosidade: luminosidadeFiltro,
+      petFriendly: petFriendlyFiltro,
+    });
+
     return res.status(200).json(plantas);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Erro ao listar plantas." });
+    return res.status(500).json({ message: "Erro ao buscar plantas." });
   }
 };
