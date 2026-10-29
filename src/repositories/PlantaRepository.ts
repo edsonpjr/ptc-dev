@@ -38,6 +38,13 @@ export const decrementEstoque = async (id: number, quantidade: number) => {
   });
 };
 
+export const decrementEstoqueSeDisponivel = async (id: number, quantidade: number) => {
+  return await prisma.planta.updateMany({
+    where: { id, estoque: { gte: quantidade } },
+    data: { estoque: { decrement: quantidade } },
+  });
+};
+
 export const findPlantasParaValorTotal = async () => {
   return await prisma.planta.findMany({
     select: { preco: true, estoque: true },
