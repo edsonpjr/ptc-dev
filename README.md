@@ -67,9 +67,20 @@ O `.env` guarda as configurações do projeto e **não vai para o git**. Os valo
 | `docker compose down` | Derruba os containers (os dados do banco continuam salvos) |
 | `yarn migration` | Cria uma migration a partir do `schema.prisma` e aplica no banco |
 | `yarn studio` | Abre o Prisma Studio para ver o banco no navegador |
+| `yarn seed` | Apaga todas as plantas e cadastra 7 plantas de exemplo (só para desenvolvimento) |
 | `yarn typecheck` | Procura erros de tipo no TypeScript |
 
 A API recarrega sozinha quando você salva um arquivo em `src/`. Só precisa rodar `docker compose up -d --build` de novo se mudar o `package.json` ou o `Dockerfile`.
+
+### Seed (plantas de exemplo)
+
+Para popular o banco com plantas de exemplo, com a API e o banco no ar e as migrations aplicadas:
+
+```bash
+yarn seed
+```
+
+O script (`prisma/seed.ts`) **apaga todas as plantas existentes** antes de inserir as 7 de exemplo, então, pode rodar quantas vezes quiser sem duplicar nada. Isso significa que plantas cadastradas à mão também são removidas. Duas das plantas de exemplo estão com estoque zero, para testar `GET /plantas/esgotadas`.
 
 > Prefere npm? Todos os comandos funcionam com `npm install` e `npm run <comando>`.
 
@@ -81,6 +92,7 @@ A API recarrega sozinha quando você salva um arquivo em `src/`. Só precisa rod
 prisma/
   schema.prisma          # Models (tabelas) do banco
   migrations/            # Histórico de mudanças no banco, gerado pelo yarn migration
+  seed.ts                # Plantas de exemplo, rodado com yarn seed
 src/
   server.ts              # Cria o app Express e sobe o servidor
   routes.ts              # Liga cada rota HTTP a uma função do controller
