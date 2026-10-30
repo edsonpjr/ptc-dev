@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Luminosidade } from "@prisma/client";
+import { Luminosidade, Prisma } from "@prisma/client";
 import * as PlantaRepository from "@repositories/PlantaRepository";
 
 type DadosPlanta = {
@@ -158,7 +158,7 @@ export const deletePlanta = async (req: Request, res: Response) => {
 
 export const readAllPlantas = async (req: Request, res: Response) => {
   try {
-    const { luminosidade, petFriendly } = req.query;
+    const { luminosidade, petFriendly, nome } = req.query;
 
     let luminosidadeFiltro: Luminosidade | undefined;
     if (luminosidade !== undefined) {
@@ -176,9 +176,18 @@ export const readAllPlantas = async (req: Request, res: Response) => {
       petFriendlyFiltro = petFriendly === "true";
     }
 
+    let nomeFiltro: Prisma.StringFilter | undefined;
+    if (nome !== undefined) {
+      if (typeof nome !== "string" || nome.trim() === "") {
+        return res.status(400).json({ message: "nome deve ser um texto não vazio." });
+      }
+      nomeFiltro = { contains: nome, mode: "insensitive" };
+    }
+
     const plantas = await PlantaRepository.findAllPlantas({
       luminosidade: luminosidadeFiltro,
       petFriendly: petFriendlyFiltro,
+      nome: nomeFiltro,
     });
 
     return res.status(200).json(plantas);

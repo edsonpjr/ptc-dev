@@ -8,6 +8,7 @@ export const createPlanta = async (data: Prisma.PlantaCreateInput) => {
 type FiltrosPlanta = {
   luminosidade?: Luminosidade;
   petFriendly?: boolean;
+  nome?: Prisma.StringFilter;
 };
 
 export const findAllPlantas = async (filtros: FiltrosPlanta) => {
@@ -15,6 +16,7 @@ export const findAllPlantas = async (filtros: FiltrosPlanta) => {
     where: {
       luminosidade: filtros.luminosidade,
       petFriendly: filtros.petFriendly,
+      nome: filtros.nome,
     },
   });
 };
