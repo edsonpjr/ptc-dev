@@ -9,6 +9,7 @@ type FiltrosPlanta = {
   luminosidade?: Luminosidade;
   petFriendly?: boolean;
   nome?: Prisma.StringFilter;
+  orderBy?: Prisma.PlantaOrderByWithRelationInput;
 };
 
 export const findAllPlantas = async (filtros: FiltrosPlanta) => {
@@ -18,6 +19,7 @@ export const findAllPlantas = async (filtros: FiltrosPlanta) => {
       petFriendly: filtros.petFriendly,
       nome: filtros.nome,
     },
+    orderBy: filtros.orderBy,
   });
 };
 

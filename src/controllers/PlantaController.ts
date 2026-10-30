@@ -158,7 +158,7 @@ export const deletePlanta = async (req: Request, res: Response) => {
 
 export const readAllPlantas = async (req: Request, res: Response) => {
   try {
-    const { luminosidade, petFriendly, nome } = req.query;
+    const { luminosidade, petFriendly, nome, ordem } = req.query;
 
     let luminosidadeFiltro: Luminosidade | undefined;
     if (luminosidade !== undefined) {
@@ -184,10 +184,20 @@ export const readAllPlantas = async (req: Request, res: Response) => {
       nomeFiltro = { contains: nome, mode: "insensitive" };
     }
 
+    const ORDENS_VALIDAS = ["preco", "nome"] as const;
+    let orderByFiltro: Prisma.PlantaOrderByWithRelationInput | undefined;
+    if (ordem !== undefined) {
+      if (!ORDENS_VALIDAS.includes(ordem as any)) {
+        return res.status(400).json({ message: "ordem deve ser preco ou nome." });
+      }
+      orderByFiltro = { [ordem as string]: "asc" };
+    }
+
     const plantas = await PlantaRepository.findAllPlantas({
       luminosidade: luminosidadeFiltro,
       petFriendly: petFriendlyFiltro,
       nome: nomeFiltro,
+      orderBy: orderByFiltro,
     });
 
     return res.status(200).json(plantas);
