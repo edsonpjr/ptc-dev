@@ -54,3 +54,7 @@ export const findPlantasParaValorTotal = async () => {
     select: { preco: true, estoque: true },
   });
 };
+
+export const findPlantasEsgotadas = async () => {
+  return await prisma.planta.findMany({ where: { estoque: 0 } });
+};
